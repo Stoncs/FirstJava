@@ -10,7 +10,7 @@ public class TicTacToe {
         }
     }
 
-    public void Show(int n){
+    void Show(int n){
         int i, j;
         for (i = 0; i < n; ++i) {
             for (j = 0; j < n; ++j)
@@ -19,29 +19,52 @@ public class TicTacToe {
         }
     }
 
-    public void AddZero(int x, int y) {
+    void AddZero(int x, int y) {
         field[y - 1][x - 1] = "0";
     }
 
-    public void AddCross(int x, int y) {
+    void AddCross(int x, int y) {
         field[y - 1][x - 1] = "X";
     }
 
-    public void Delete(int x, int y) {
+    void Delete(int x, int y) {
         field[y - 1][x - 1] = "_";
     }
 
-    public void CheckCross(int n) {
-        int current;
+    void CheckCross(int n) {
+        int current, i, j, m;
         int max = 0;
-        for (int i = 0; i < n; i++) {
+        /*for (i = 0; i < n; i++) {
             if (field[i][0].equals("X")) current = 1;
                 else current = 0;
-            for (int j = 1; j < n; j++)
+            for (j = 1; j < n; j++)
             if (field[i][j].equals("X") && field[i][j - 1].equals("X")) current += 1;
                 else {
                     if (current > max) max = current;
                     current = 0;
+            }
+            if (current > max) max = current;
+        }
+        for (j = 0; j < n; j++) {
+            if (field[0][j].equals("X")) current = 1;
+            else current = 0;
+            for (i = 1; i < n; i++)
+                if (field[i][j].equals("X") && field[i - 1][j].equals("X")) current += 1;
+                else {
+                    if (current > max) max = current;
+                    current = 0;
+                }
+            if (current > max) max = current;
+        } */
+        for (i = 0; i < n; i++) {
+            if (field[i][0].equals("X")) current = 1;
+            else current = 0;
+            for (j = 1, m = i - 1; j < n && m >= 0; j++, m--) {
+                if (field[m][j].equals("X") && field[m + 1][j - 1].equals("X")) current += 1;
+                else {
+                    if (current > max) max = current;
+                    current = 0;
+                }
             }
             if (current > max) max = current;
         }
@@ -57,8 +80,8 @@ class GameDemo {
         demo.AddCross(3, 2);
         demo.AddCross(4, 2);
         demo.AddCross(3, 3);
-        demo.AddCross(2, 4);
         demo.AddCross(1, 5);
+        demo.AddCross(2, 1);
         demo.Show(5);
         demo.CheckCross(5);
     }
