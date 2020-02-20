@@ -10,7 +10,7 @@ public class TicTacToe {
         }
     }
 
-    void Show(int n){
+    private void show(int n){
         int i, j;
         for (i = 0; i < n; ++i) {
             for (j = 0; j < n; ++j)
@@ -19,47 +19,49 @@ public class TicTacToe {
         }
     }
 
-    void AddZero(int x, int y) {
+    public void addZero(int x, int y) {
         field[y - 1][x - 1] = "0";
     }
 
-    void AddCross(int x, int y) {
+    public void addCross(int x, int y) {
         field[y - 1][x - 1] = "X";
     }
 
-    void Delete(int x, int y) {
+    public void Delete(int x, int y) {
         field[y - 1][x - 1] = "_";
     }
 
-    void CheckCross(int n) {
+    public int checkCross(int n) {
         int current, i, j, m;
         int max = 0;
-        /*for (i = 0; i < n; i++) {
-            if (field[i][0].equals("X")) current = 1;
-                else current = 0;
+        for (i = 0; i < n; i++) {               //проверка горизонталей, если нет ни одного?
+            if (field[i][0].equals("X"))
+            current = 1;
+             else current = 0;
             for (j = 1; j < n; j++)
-            if (field[i][j].equals("X") && field[i][j - 1].equals("X")) current += 1;
-                else {
+            if (!field[i][j].equals("X")) {
+                if (current > max) max = current;
+                current = 0;
+            }
+            else current += 1;
+            if (current > max) max = current;
+        }
+        if (max == 0) return max;
+        for (j = 0; j < n; j++) {               //проверка вертикалей
+            if (field[0][j].equals("X")) current = 1;
+            else current = 0;
+            for (i = 1; i < n; i++) {
+                if (field[i][j].equals("X")) {
                     if (current > max) max = current;
                     current = 0;
+                } else current += 1;
             }
             if (current > max) max = current;
         }
-        for (j = 0; j < n; j++) {
-            if (field[0][j].equals("X")) current = 1;
-            else current = 0;
-            for (i = 1; i < n; i++)
-                if (field[i][j].equals("X") && field[i - 1][j].equals("X")) current += 1;
-                else {
-                    if (current > max) max = current;
-                    current = 0;
-                }
-            if (current > max) max = current;
-        } */
-        for (i = 0; i < n; i++) {
+        for (i = 0; i < n; i++) {               //проверка одной диагонали и || ей (первая половина)
             if (field[i][0].equals("X")) current = 1;
             else current = 0;
-            for (j = 1, m = i - 1; j < n && m >= 0; j++, m--) {
+            for (j = 1, m = i - 1; j < n && m >= 0; m--, j++) {
                 if (field[m][j].equals("X") && field[m + 1][j - 1].equals("X")) current += 1;
                 else {
                     if (current > max) max = current;
@@ -68,21 +70,59 @@ public class TicTacToe {
             }
             if (current > max) max = current;
         }
-        System.out.println(max);
+        for (j = 1; j < n; j++) {               //вторая половина
+            if (field[n - 1][j].equals("X")) current = 1;
+            else current = 0;
+            for (i = n - 2, m = j + 1; i >= 0 && m < n; i--, m++) {
+                if (!field[i][m].equals("X")) {
+                    if (current > max) max = current;
+                    current = 0;
+                }
+                else current += 1;
+            }
+            if (current > max) max = current;
+        }
+        for (i = n - 1; i >= 0; i--) {               //проверка другой диагонали и || ей (первая половина)
+            if (field[i][0].equals("X")) current = 1;
+            else current = 0;
+            for (j = 1, m = i + 1; j < n && m < n ; m++, j++) {
+                if (!field[m][j].equals("X")) {
+                    if (current > max) max = current;
+                    current = 0;
+                }
+                else current += 1;
+            }
+            if (current > max) max = current;
+        }
+        for (j = 1; j < n; j++) {                   //вторая половина
+            if (field[0][j].equals("X")) current = 1;
+            else current = 0;
+            for (i = 0, m = j + 1; i >= 0 && m < n; i++, m++) {
+                if (!field[i][m].equals("X")) {
+                    if (current > max) max = current;
+                    current = 0;
+                }
+                else current += 1;
+            }
+            if (current > max) max = current;
+        }
+        return max;
     }
-}
 
-class GameDemo {
-    public static void main (String[] args) {
-        TicTacToe demo = new TicTacToe(5);
-        demo.AddCross(1, 2);
-        demo.AddCross(2, 2);
-        demo.AddCross(3, 2);
-        demo.AddCross(4, 2);
-        demo.AddCross(3, 3);
-        demo.AddCross(1, 5);
-        demo.AddCross(2, 1);
-        demo.Show(5);
-        demo.CheckCross(5);
+        public static void main (String[] args) {
+            TicTacToe demo = new TicTacToe(5);
+            demo.addCross(1, 2);
+            demo.addCross(2, 2);
+            demo.addCross(3, 2);
+            demo.addCross(4, 4);
+            demo.addCross(5, 5);
+            demo.addCross(3, 3);
+            demo.addCross(1, 5);
+            demo.addCross(2, 1);
+            demo.addCross(5,4);
+            demo.addCross(4, 5);
+            demo.show(5);
+            System.out.println(demo.checkCross(5));
+        }
     }
-}
+
