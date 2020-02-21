@@ -1,11 +1,9 @@
+/*
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 class TicTacToeTest {
-    /*@Override
-    public boolean equals(Object o) {
 
-    }*/
     @Test
     void addZero() {
         TicTacToe game = new TicTacToe(10);
@@ -115,4 +113,4 @@ class TicTacToeTest {
         game.addZero(6, 2);
         Assert.assertEquals(4, game.checkZero()); //по диагонали слева свехру вправо вниз (второй цикл)
     }
-}
+}*/
