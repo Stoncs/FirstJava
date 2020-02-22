@@ -1,6 +1,7 @@
-/*
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 class TicTacToeTest {
 
@@ -46,42 +47,42 @@ class TicTacToeTest {
     @Test
     void checkCross() {
         TicTacToe game1 = new TicTacToe(3);
-        Assert.assertEquals(0, game1.checkCross()); //проверка на пустое поле
+        Assert.assertEquals(List.of(), game1.checkCross()); //проверка на пустое поле
         game1.addCross(1,1);
         game1.addCross(2,3);
-        Assert.assertEquals(1, game1.checkCross()); //макс = 1
+        Assert.assertEquals("[0; 0, 0; 0]", game1.checkCross().toString()); //макс = 1
         game1.addCross(3,3);
-        Assert.assertEquals(2, game1.checkCross()); //макс = 2, по горизонтали
+        Assert.assertEquals("[2; 1, 2; 2]", game1.checkCross().toString()); //макс = 2, по горизонтали
         TicTacToe game2 = new TicTacToe(6);
         game2.addCross(2,2);
         game2.addCross(3,2);
         game2.addCross(5,2);
         game2.addCross(6,2);
         game2.addZero(4,2);
-        Assert.assertEquals(2, game2.checkCross()); //по горизонтали
+        Assert.assertEquals("[1; 1, 1; 2]", game2.checkCross().toString()); //по горизонтали
         game2.addCross(4,3);
         game2.addCross(4,4);
         game2.addCross(4,5);
-        Assert.assertEquals(3, game2.checkCross()); //по вертикали
+        Assert.assertEquals("[2; 3, 4; 3]", game2.checkCross().toString()); //по вертикали
         game2.addCross(5,4);
         game2.addCross(6,5);
-        Assert.assertEquals(4, game2.checkCross()); //по диагонали слева сверху вправо вниз (второй цикл)
+        Assert.assertEquals("[1; 2, 4; 5]", game2.checkCross().toString()); //по диагонали слева сверху вправо вниз (второй цикл)
         TicTacToe game3 = new TicTacToe(10);
         game3.addCross(3,10);
         game3.addCross(2,9);
         game3.addCross(1, 8);
-        Assert.assertEquals(3, game3.checkCross()); //по диагонали слева сверху вправо вниз (первый цикл)
+        Assert.assertEquals("[7; 0, 9; 2]", game3.checkCross().toString()); //по диагонали слева сверху вправо вниз (первый цикл)
         game3.addCross(1, 4);
         game3.addCross(2, 3);
         game3.addCross(3, 2);
         game3.addCross(4, 1);
-        Assert.assertEquals(4, game3.checkCross()); //по диагонали слева снизу вправо вверх (первый цикл)
+        Assert.assertEquals("[0; 3, 3; 0]", game3.checkCross().toString()); //по диагонали слева снизу вправо вверх (первый цикл)
         game3.addCross(5, 8);
         game3.addCross(6, 7);
         game3.addCross(7, 6);
         game3.addCross(8, 5);
         game3.addCross(9, 4);
-        Assert.assertEquals(5, game3.checkCross()); //по диагонали слева снизу вправо вверх (второй цикл)
+        Assert.assertEquals("[3; 8, 7; 4]", game3.checkCross().toString()); //по диагонали слева снизу вправо вверх (второй цикл)
     }
 
     @Test
@@ -113,4 +114,4 @@ class TicTacToeTest {
         game.addZero(6, 2);
         Assert.assertEquals(4, game.checkZero()); //по диагонали слева свехру вправо вниз (второй цикл)
     }
-}*/
+}

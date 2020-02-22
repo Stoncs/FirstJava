@@ -65,159 +65,72 @@ public class TicTacToe {
         field[y - 1][x - 1] = "_";
     }
 
+    private Object[] spider(int i, int j, int max) {
+        int k, n;
+        Position end = new Position(-1, -1);
+        Object[] result = new Object[2];
+        int current = 1;
+        for (n = j + 1; n < desk; n++) {        //по горизонтали
+           if (!field[i][n].equals("X")) break;
+           current++;
+        }
+        if (current > max) {
+            end = new Position(i, n - 1);
+            max = current;
+        }
+        current = 1;
+        for (k = i + 1; k < desk; k++) {        //по вертикали
+            if (!field[k][j].equals("X")) break;
+            current++;
+        }
+        if (current > max) {
+            end = new Position(k - 1, j);
+            max = current;
+        }
+        current = 1;
+        for (k = i + 1, n = j - 1; k < desk && n >= 0; k++, n--) {  //по диагонали сверху справа влево вниз
+            if (!field[k][n].equals("X")) break;
+            current++;
+        }
+        if (current > max) {
+            end = new Position(k - 1, n + 1);
+            max = current;
+        }
+        current = 1;
+        for (k = i + 1, n = j + 1; k < desk && n < desk; k++, n++) {    //по диагонали сверху слева вправо вниз
+            if (!field[k][n].equals("X")) break;
+            current++;
+        }
+        if (current> max) {
+            end = new Position(k - 1, n - 1);
+            max = current;
+        }
+        result[0] = end;
+        result[1] = max;
+        return result;
+    }
+
     public List<Position> checkCross() {
-        int current, i, j, m;
-        int n = -1;      //текущий индекс в листах
-        int max = 0;        //макс последовательность
+        int i, j;
+        int max = 0;
+        Position notFound = new Position(-1, -1);
+        Object[] end;
         List<Position> listI = new ArrayList<>(List.of());  //лист для начала самой длинной последовательности
         List<Position> listJ = new ArrayList<>(List.of());  //лист для конца самой длинной последовательности
-        Position begin = new Position(0,0);
-        for (i = 0; i < desk; i++) {               //проверка горизонталей, если нет ни одного?
-            if (field[i][0].equals("X")) {
-                current = 1;
-                begin = new Position(i,0);
-            }
-            else current = 0;
-            for (j = 1; j < desk; j++)
-                if (!field[i][j].equals("X")) {
-                    if (current > max) {            //если последовательность оборвалась
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(i, j - 1));
-                        n++;
+        for (i = 0; i < desk; i++) {
+            for (j = 0; j < desk; j++) {
+                if (field[i][j].equals("X")) {
+                    end = spider(i, j, max);
+                    if (!end[0].equals(notFound)) {
+                        listI.add(new Position(i, j));
+                        listJ.add((Position) end[0]);
+                        max = (int) end[1];
                     }
-                    current = 0;
                 }
-                else current += 1;
-            if (current > max) {        //проверка в конце горизонтали
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(i, desk - 1));
-                n++;
             }
         }
-        if (max == 0) return List.of();     //если поле пустое, вернуть пустой лист
-        for (j = 0; j < desk; j++) {               //проверка вертикалей
-            if (field[0][j].equals("X")) {
-                current = 1;
-                begin = new Position(0, j);
-            }
-            else current = 0;
-            for (i = 1; i < desk; i++) {
-                if (!field[i][j].equals("X")) {
-                    if (current > max) {
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(i - 1, j));
-                        n++;
-                    }
-                    current = 0;
-                } else current += 1;
-            }
-            if (current > max) {
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(desk - 1, j));
-                n++;
-            }
-        }
-        for (i = 0; i < desk; i++) {               //проверка одной диагонали и || ей (первая половина)
-            if (field[i][0].equals("X")) current = 1;
-            else current = 0;
-            for (j = 1, m = i - 1; j < desk && m >= 0; m--, j++) {
-                if (!field[m][j].equals("X")) {
-                    if (current > max) {
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(m + 1, j - 1));
-                        n++;
-                    }
-                    current = 0;
-                } else current += 1;
-            }
-            if (current > max) {
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(m + 1, j - 1));
-                n++;
-            }
-        }
-        for (j = 1; j < desk; j++) {               //вторая половина
-            if (field[desk - 1][j].equals("X")) {
-                current = 1;
-                begin = new Position(desk - 1, j);
-            }
-            else current = 0;
-            for (i = desk - 2, m = j + 1; i >= 0 && m < desk; i--, m++) {
-                if (!field[i][m].equals("X")) {
-                    if (current > max) {
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(i + 1, m - 1));
-                        n++;
-                    }
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) {
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(i + 1, m - 1));
-                n++;
-            }
-        }
-        for (i = desk - 1; i >= 0; i--) {               //проверка другой диагонали и || ей (первая половина)
-            if (field[i][0].equals("X")) {
-                current = 1;
-                begin = new Position(i,0);
-            }
-            else current = 0;
-            for (j = 1, m = i + 1; j < desk && m < desk ; m++, j++) {
-                if (!field[m][j].equals("X")) {
-                    if (current > max) {
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(m - 1, j - 1));
-                        n++;
-                    }
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) {
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(m + 1, j - 1));
-                n++;
-            }
-        }
-        for (j = 1; j < desk; j++) {                   //вторая половина
-            if (field[0][j].equals("X")) {
-                current = 1;
-                begin = new Position(0,j);
-            }
-            else current = 0;
-            for (i = 1, m = j + 1; i < desk && m < desk; i++, m++) {
-                if (!field[i][m].equals("X")) {
-                    if (current > max) {
-                        max = current;
-                        listI.add(begin);
-                        listJ.add(new Position(i - 1, m - 1));
-                        n++;
-                    }
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) {
-                max = current;
-                listI.add(begin);
-                listJ.add(new Position(i - 1, m - 1));
-                n++;
-            }
-        }
-        return List.of(listI.get(n), listJ.get(n));
+        if (max == 0) return List.of();
+        return List.of(listI.get(listI.size() - 1), listJ.get(listJ.size() - 1));
     }
 
     public int checkZero() {           //тоже самое, что и checkCross, только вместо X - 0
@@ -299,9 +212,8 @@ public class TicTacToe {
 
         public static void main (String[] args) {
             TicTacToe game = new TicTacToe(5);
-            List<Position> listI = new ArrayList<>(List.of());
-            List<Position> listJ = new ArrayList<>(List.of());
-            game.addCross(1,2);
+            game.addCross(1,1);
+            game.addCross(2,1);
             game.checkCross();
             System.out.println(game.checkCross().toString());
         }
