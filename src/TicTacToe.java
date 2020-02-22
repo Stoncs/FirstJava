@@ -27,7 +27,7 @@ class Position {
 
     @Override
     public String toString() {
-        return i + "; " + j;
+        return "(" + i + "; " + j + ")";
     }
 }
 
@@ -44,7 +44,7 @@ public class TicTacToe {
         }
     }
 
-    private void show(){
+    public void show(){
         int i, j;
         for (i = 0; i < desk; ++i) {
             for (j = 0; j < desk; ++j)
@@ -53,25 +53,25 @@ public class TicTacToe {
         }
     }
 
-    public void addZero(int x, int y) {
-        field[y - 1][x - 1] = "0";
+    public void addZero(int i, int j) {
+        field[i][j] = "0";
     }
 
-    public void addCross(int x, int y) {
-        field[y - 1][x - 1] = "X";
+    public void addCross(int i, int j) {
+        field[i][j] = "X";
     }
 
-    public void delete(int x, int y) {
-        field[y - 1][x - 1] = "_";
+    public void delete(int i, int j) {
+        field[i][j] = "_";
     }
 
-    private Object[] spider(int i, int j, int max) {
+    private Object[] spider(int i, int j, int max, String expected) {        //ищет последовательности во всех направлениях
         int k, n;
         Position end = new Position(-1, -1);
         Object[] result = new Object[2];
         int current = 1;
         for (n = j + 1; n < desk; n++) {        //по горизонтали
-           if (!field[i][n].equals("X")) break;
+           if (!field[i][n].equals(expected)) break;
            current++;
         }
         if (current > max) {
@@ -80,7 +80,7 @@ public class TicTacToe {
         }
         current = 1;
         for (k = i + 1; k < desk; k++) {        //по вертикали
-            if (!field[k][j].equals("X")) break;
+            if (!field[k][j].equals(expected)) break;
             current++;
         }
         if (current > max) {
@@ -89,7 +89,7 @@ public class TicTacToe {
         }
         current = 1;
         for (k = i + 1, n = j - 1; k < desk && n >= 0; k++, n--) {  //по диагонали сверху справа влево вниз
-            if (!field[k][n].equals("X")) break;
+            if (!field[k][n].equals(expected)) break;
             current++;
         }
         if (current > max) {
@@ -98,15 +98,15 @@ public class TicTacToe {
         }
         current = 1;
         for (k = i + 1, n = j + 1; k < desk && n < desk; k++, n++) {    //по диагонали сверху слева вправо вниз
-            if (!field[k][n].equals("X")) break;
+            if (!field[k][n].equals(expected)) break;
             current++;
         }
         if (current> max) {
             end = new Position(k - 1, n - 1);
             max = current;
         }
-        result[0] = end;
-        result[1] = max;
+        result[0] = end;    //координата конца последовательности
+        result[1] = max;    //новая максимальная длина последовательности
         return result;
     }
 
@@ -120,7 +120,7 @@ public class TicTacToe {
         for (i = 0; i < desk; i++) {
             for (j = 0; j < desk; j++) {
                 if (field[i][j].equals("X")) {
-                    end = spider(i, j, max);
+                    end = spider(i, j, max, "X");
                     if (!end[0].equals(notFound)) {
                         listI.add(new Position(i, j));
                         listJ.add((Position) end[0]);
@@ -133,81 +133,27 @@ public class TicTacToe {
         return List.of(listI.get(listI.size() - 1), listJ.get(listJ.size() - 1));
     }
 
-    public int checkZero() {           //тоже самое, что и checkCross, только вместо X - 0
-        int current, i, j, m;
+    public List<Position> checkZero() {     //тоже самое, только вместо "X" - "0"
+        int i, j;
         int max = 0;
+        Position notFound = new Position(-1, -1);
+        Object[] end;
+        List<Position> listI = new ArrayList<>(List.of());  //лист для начала самой длинной последовательности
+        List<Position> listJ = new ArrayList<>(List.of());  //лист для конца самой длинной последовательности
         for (i = 0; i < desk; i++) {
-            if (field[i][0].equals("0"))
-                current = 1;
-            else current = 0;
-            for (j = 1; j < desk; j++)
-                if (!field[i][j].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
+            for (j = 0; j < desk; j++) {
+                if (field[i][j].equals("0")) {
+                    end = spider(i, j, max, "0");
+                    if (!end[0].equals(notFound)) {
+                        listI.add(new Position(i, j));
+                        listJ.add((Position) end[0]);
+                        max = (int) end[1];
+                    }
                 }
-                else current += 1;
-            if (current > max) max = current;
-        }
-        if (max == 0) return max;
-        for (j = 0; j < desk; j++) {
-            if (field[0][j].equals("0")) current = 1;
-            else current = 0;
-            for (i = 1; i < desk; i++) {
-                if (!field[i][j].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
-                } else current += 1;
             }
-            if (current > max) max = current;
         }
-        for (i = 0; i < desk; i++) {
-            if (field[i][0].equals("0")) current = 1;
-            else current = 0;
-            for (j = 1, m = i - 1; j < desk && m >= 0; m--, j++) {
-                if (!field[m][j].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
-                } else current += 1;
-            }
-            if (current > max) max = current;
-        }
-        for (j = 1; j < desk; j++) {
-            if (field[desk - 1][j].equals("0")) current = 1;
-            else current = 0;
-            for (i = desk - 2, m = j + 1; i >= 0 && m < desk; i--, m++) {
-                if (!field[i][m].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) max = current;
-        }
-        for (i = desk - 1; i >= 0; i--) {
-            if (field[i][0].equals("0")) current = 1;
-            else current = 0;
-            for (j = 1, m = i + 1; j < desk && m < desk ; m++, j++) {
-                if (!field[m][j].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) max = current;
-        }
-        for (j = 1; j < desk; j++) {
-            if (field[0][j].equals("0")) current = 1;
-            else current = 0;
-            for (i = 1, m = j + 1; i < desk && m < desk; i++, m++) {
-                if (!field[i][m].equals("0")) {
-                    if (current > max) max = current;
-                    current = 0;
-                }
-                else current += 1;
-            }
-            if (current > max) max = current;
-        }
-        return max;
+        if (max == 0) return List.of();
+        return List.of(listI.get(listI.size() - 1), listJ.get(listJ.size() - 1));
     }
 
         public static void main (String[] args) {
