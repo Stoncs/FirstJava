@@ -44,7 +44,7 @@ public class TicTacToe {
         }
     }
 
-    public void show(){
+    private void show(){
         int i, j;
         for (i = 0; i < desk; ++i) {
             for (j = 0; j < desk; ++j)
