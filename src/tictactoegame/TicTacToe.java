@@ -125,6 +125,7 @@ public class TicTacToe {
         TicTacToe game = new TicTacToe(5);
         game.addCross(1,1);
         game.addCross(2,1);
+        
         }
     }
 
