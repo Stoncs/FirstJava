@@ -1,6 +1,6 @@
 package tictactoegame;
 
-public enum Value {
+public enum Box {
     X,
     O,
     E,

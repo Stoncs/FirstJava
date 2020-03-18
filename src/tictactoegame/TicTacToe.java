@@ -4,102 +4,99 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TicTacToe {
-    private Value[][] field;
+    private Box[][] field;
     private int size;
     public TicTacToe(int n){
         size = n;
         int i, j;
-        field = new Value[n][n];
+        field = new Box[n][n];
         for (i = 0; i < n; ++i) {
             for (j = 0; j < n; ++j)
-            field[i][j] = Value.E;
+            field[i][j] = Box.E;
         }
     }
 
-    public Value returnValue (int i, int j) {
-        return field[i][j];
-    }
-
-    private void show(){
+    @Override
+    public String toString() {
         int i, j;
         for (i = 0; i < size; ++i) {
             for (j = 0; j < size; ++j)
                 System.out.print(field[i][j] + "  ");
             System.out.println();
         }
+        return null;
+    }
+
+    public Box returnValue (int i, int j) {
+        return field[i][j];
     }
 
     public void addZero(int i, int j) {
-        field[i][j] = Value.O;
+        field[i][j] = Box.O;
     }
 
     public void addCross(int i, int j) {
-        field[i][j] = Value.X;
+        field[i][j] = Box.X;
     }
 
     public void delete(int i, int j) {
-        field[i][j] = Value.E;
+        field[i][j] = Box.E;
     }
 
-    static class ForSpider{     //вложенный класс, чтобы вернуть два значения разных типов
-        private final int max;
-        private final Position end;
+    private static class ForSpider{     //вложенный класс, чтобы вернуть два значения разных типов
+        final int max;
+        final Position end;
 
         public ForSpider(int max, Position end) {
             this.max = max;
             this.end = end;
         }
-        public int getMax() {
-            return max;
-        }
-        public Position getEnd() {
-            return end;
-        }
     }
-
-    private ForSpider spider(int i, int j, int max, Value expected) {        //ищет последовательности во всех направлениях
-        int k, n;
-        Position end = notFound;
+    private ForSpider control(int i, int k, int j, int n, Box expected, int max, Position end) {
+        int row, column;
         int current = 1;
-        for (n = j + 1; n < size; n++) {        //по горизонтали
-           if (!field[i][n].equals(expected)) break;
-           current++;
-        }
-        if (current > max) {
-            end = new Position(i, n - 1);
-            max = current;
-        }
-        current = 1;
-        for (k = i + 1; k < size; k++) {        //по вертикали
-            if (!field[k][j].equals(expected)) break;
+        for (row = i, column = j; (row < size && row >=0) && (column < size && column >= 0); row += k, column += n) {  //по диагонали сверху справа влево вниз
+            if (!field[row][column].equals(expected)) break;
             current++;
         }
         if (current > max) {
-            end = new Position(k - 1, j);
-            max = current;
-        }
-        current = 1;
-        for (k = i + 1, n = j - 1; k < size && n >= 0; k++, n--) {  //по диагонали сверху справа влево вниз
-            if (!field[k][n].equals(expected)) break;
-            current++;
-        }
-        if (current > max) {
-            end = new Position(k - 1, n + 1);
-            max = current;
-        }
-        current = 1;
-        for (k = i + 1, n = j + 1; k < size && n < size; k++, n++) {    //по диагонали сверху слева вправо вниз
-            if (!field[k][n].equals(expected)) break;
-            current++;
-        }
-        if (current> max) {
-            end = new Position(k - 1, n - 1);
+            end = new Position(row - k, column - n);
             max = current;
         }
         return new ForSpider(max, end);
     }
+
+    private ForSpider spider(int i, int j, int max, Box expected) {        //ищет последовательности во всех направлениях
+        int k, n;
+        Position end = notFound;
+        int current = 1;
+        ForSpider operation;
+        operation = control(i, 0, j + 1, 1, expected, max, end);        //по горизонтали
+        if (operation.max > max) {
+            max = operation.max;
+            end = operation.end;
+        }
+        operation = control(i + 1, 1, j, 0, expected, max, end);        //по вертикали
+        if (operation.max > max) {
+            max = operation.max;
+            end = operation.end;
+        }
+        operation = control(i + 1, 1, j - 1, -1, expected, max, end);       //по диагонали сверхну справа влево вниз
+        if (operation.max > max) {
+            max = operation.max;
+            end = operation.end;
+        }
+        operation = control(i + 1, 1, j + 1, 1, expected, max, end);        //по диагонали сверху слева вправо вниз
+        if (operation.max > max) {
+            max = operation.max;
+            end = operation.end;
+        }
+        return new ForSpider(max, end);
+    }
+
     private static Position notFound = new Position(-1, -1);
-    public List<Position> check(Value expected) {
+
+    public List<Position> check(Box expected) {
         int i, j;
         int max = 0;
         ForSpider end;
@@ -109,10 +106,10 @@ public class TicTacToe {
             for (j = 0; j < size; j++) {
                 if (field[i][j].equals(expected)) {
                     end = spider(i, j, max, expected);
-                    if (!end.getEnd().equals(notFound)) {
+                    if (!end.end.equals(notFound)) {
                         listI.add(new Position(i, j));
-                        listJ.add(end.getEnd());
-                        max = end.getMax();
+                        listJ.add(end.end);
+                        max = end.max;
                     }
                 }
             }
@@ -125,6 +122,7 @@ public class TicTacToe {
         TicTacToe game = new TicTacToe(5);
         game.addCross(1,1);
         game.addCross(2,1);
+        game.toString();
         }
     }
 
