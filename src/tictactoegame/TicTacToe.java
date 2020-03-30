@@ -18,13 +18,14 @@ public class TicTacToe {
 
     @Override
     public String toString() {
+        StringBuilder result = new StringBuilder();
         int i, j;
         for (i = 0; i < size; ++i) {
             for (j = 0; j < size; ++j)
-                System.out.print(field[i][j] + "  ");
-            System.out.println();
+                result.append(field[i][j]).append("  ");
+            result.append("\n");
         }
-        return null;
+        return result.toString();
     }
 
     public Box returnValue (int i, int j) {
@@ -122,7 +123,7 @@ public class TicTacToe {
         TicTacToe game = new TicTacToe(5);
         game.addCross(1,1);
         game.addCross(2,1);
-        game.toString();
+        System.out.print(game.toString());
         }
     }
 
